@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:desafio_web_despesas/confirm_guests/views/widgets/body_confirm_guests.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/expense_model.dart';
@@ -77,6 +78,7 @@ class _BodyExpenseState extends State<BodyExpense> {
           totalPending += expense.value;
         }
         totalExpense += expense.value;
+
         expensesList.add(expense);
       }
     }).whenComplete(() => setState(() {}));
@@ -151,7 +153,24 @@ class _BodyExpenseState extends State<BodyExpense> {
               CardTotalsMoney(totalString: 'Total Pendente : $totalPending'),
               CardTotalsMoney(totalString: 'Total: $totalExpense'),
             ],
-          )
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const BodyConfirmGuests(),
+                ),
+              );
+            },
+            style: ButtonStyle(
+              padding: MaterialStateProperty.all(const EdgeInsets.all(20)),
+              backgroundColor: MaterialStateProperty.all(Colors.purple),
+            ),
+            child: const Text(
+              'Convidados',
+            ),
+          ),
         ],
       ),
     );
