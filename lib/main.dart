@@ -2,16 +2,11 @@ import 'package:desafio_web_despesas/views/expense_page_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
+import 'firebase_options.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: const FirebaseOptions(
-      apiKey: 'AIzaSyDXJumVxYDQwchYkEtmXAXX1ZBUgT5g_wo',
-      appId: '1:1005941296376:web:caf7878a165a58b29c7f0d',
-      messagingSenderId: '1005941296376',
-      projectId: 'desafiodespesas',
-    ),
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
