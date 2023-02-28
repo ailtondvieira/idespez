@@ -51,8 +51,20 @@ class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
 
   @override
   void initState() {
-    super.initState();
     getGuests();
+    super.initState();
+  }
+
+  List<GuestsModel> guestsSearch = [];
+
+  void searchGuest(String value) {
+    guestsSearch = guestsList.where((element) {
+      return element.name.toLowerCase().contains(value.toLowerCase());
+    }).toList();
+
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<void> addGuests() async {
@@ -171,6 +183,23 @@ class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: TextField(
+              onChanged: (value) {
+                searchGuest(value);
+                setState(() {});
+              },
+              decoration: InputDecoration(
+                labelText: 'Pesquisar',
+                filled: true,
+                suffixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+          ),
           FieldAddGuests(
             nameController: nameController,
             phoneController: phoneController,
@@ -257,9 +286,16 @@ class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
               visible: guestsList.isEmpty,
               replacement: ListView.builder(
                 shrinkWrap: true,
-                itemCount: guestsList.length,
+                itemCount: guestsSearch.isNotEmpty
+                    ? guestsSearch.length
+                    : guestsList.length,
                 itemBuilder: (context, index) {
                   var guest = guestsList[index];
+                  if (guestsSearch.isEmpty) {
+                    guest = guestsList[index];
+                  } else {
+                    guest = guestsList[index];
+                  }
                   return ListTile(
                     trailing: Padding(
                       padding: const EdgeInsets.only(top: 17),
