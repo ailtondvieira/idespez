@@ -22,6 +22,7 @@ class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
 
   final nameController = TextEditingController();
   final phoneController = TextEditingController();
+  final searchController = TextEditingController();
 
   final List<int> listAdults = <int>[1, 2, 3, 4, 5, 6, 7, 8];
   final List<int> listKids = <int>[0, 1, 2, 3, 4, 5];
@@ -33,7 +34,7 @@ class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
   int totalKids = 0;
   int totalGuests = 0;
 
-  final IconData whatsApp = const IconData(
+  final IconData whatsapp = const IconData(
     0xf05a6,
     fontFamily: 'MaterialIcons',
   );
@@ -47,9 +48,13 @@ class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
   List<GuestsModel> guestsSearch = [];
 
   void searchGuest(String value) {
-    guestsSearch = guestsList.where((element) {
-      return element.name.toLowerCase().contains(value.toLowerCase());
-    }).toList();
+    guestsSearch = guestsList.where(
+      (element) {
+        return element.name.toLowerCase().contains(
+              value.toLowerCase(),
+            );
+      },
+    ).toList();
 
     if (mounted) {
       setState(() {});
@@ -189,6 +194,7 @@ class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: TextField(
+              controller: searchController,
               onChanged: (value) {
                 searchGuest(value);
                 setState(() {});
@@ -298,7 +304,7 @@ class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
                   if (guestsSearch.isEmpty) {
                     guest = guestsList[index];
                   } else {
-                    guest = guestsList[index];
+                    guest = guestsSearch[index];
                   }
                   return ListTile(
                     trailing: Padding(
@@ -341,8 +347,8 @@ class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
                           onPressed: () async {
                             await openWhatsapp(guest.phone);
                           },
-                          icon: Icon(
-                            whatsApp,
+                          icon: const Icon(
+                            Icons.call,
                             color: Colors.green,
                           ),
                         ),

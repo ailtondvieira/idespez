@@ -31,6 +31,21 @@ class _BodyExpenseState extends State<BodyExpense> {
   double totalPending = 0;
   double totalPaid = 0;
 
+  List<ExpenseModel> expenseSearch = [];
+
+  String valueSearch = '';
+  void searchExpense() {
+    if (valueSearch.isEmpty) return;
+
+    expenseSearch = expensesList.where((element) {
+      return element.title.toLowerCase().contains(valueSearch.toLowerCase());
+    }).toList();
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   Future<void> addExpense() async {
     if (titleController.text.isEmpty || valueController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -135,16 +150,40 @@ class _BodyExpenseState extends State<BodyExpense> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: TextField(
+                onChanged: (value) {
+                  valueSearch = value;
+                  searchExpense();
+                },
+                decoration: InputDecoration(
+                  labelText: 'Pesquisar',
+                  filled: true,
+                  suffixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+            ),
             FieldsAddExpense(
               titleController: titleController,
               valueController: valueController,
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: expensesList.length,
+                itemCount: expenseSearch.isNotEmpty
+                    ? expenseSearch.length
+                    : expensesList.length,
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   ExpenseModel expense = expensesList[index];
+                  if (expenseSearch.isEmpty) {
+                    expense = expensesList[index];
+                  } else {
+                    expense = expenseSearch[index];
+                  }
                   return ListTileExpense(
                     expense: expense,
                     deleteExpense: () {
