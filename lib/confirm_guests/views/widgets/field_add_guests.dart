@@ -14,33 +14,36 @@ class FieldAddGuests extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TextFormField(
-          decoration: InputDecoration(
-            hintText: 'Nome',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: Column(
+        children: [
+          TextFormField(
+            decoration: InputDecoration(
+              hintText: 'Nome',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
+            controller: nameController,
           ),
-          controller: nameController,
-        ),
-        const SizedBox(height: 10),
-        TextFormField(
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            TelefoneInputFormatter(),
-          ],
-          decoration: InputDecoration(
-            hintText: 'Telefone',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+          const SizedBox(height: 10),
+          TextFormField(
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              TelefoneInputFormatter(),
+            ],
+            decoration: InputDecoration(
+              hintText: 'Telefone',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
+            controller: phoneController,
           ),
-          controller: phoneController,
-        ),
-        const SizedBox(height: 10),
-      ],
+          const SizedBox(height: 10),
+        ],
+      ),
     );
   }
 }

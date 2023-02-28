@@ -6,12 +6,16 @@ class GuestsModel {
   String name;
   String phone;
   bool isConfirm;
+  int quantityAdults;
+  int quantityKids;
 
   GuestsModel({
     this.id,
     required this.name,
     required this.phone,
     required this.isConfirm,
+    required this.quantityAdults,
+    required this.quantityKids,
   });
 
   Map<String, dynamic> toMap() {
@@ -19,6 +23,8 @@ class GuestsModel {
       'name': name,
       'phone': phone,
       'isConfirm': isConfirm,
+      'quantityAdults': quantityAdults,
+      'quantityKids': quantityKids,
     };
   }
 
@@ -27,6 +33,8 @@ class GuestsModel {
       name: map['name'] ?? '',
       phone: map['phone'] ?? '',
       isConfirm: map['isConfirm'] ?? '',
+      quantityAdults: int.tryParse(map['quantityAdults'].toString()) ?? 0,
+      quantityKids: int.tryParse(map['quantityKids'].toString()) ?? 0,
     );
   }
 

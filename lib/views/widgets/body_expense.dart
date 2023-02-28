@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:desafio_web_despesas/confirm_guests/views/widgets/body_confirm_guests.dart';
+import 'package:desafio_web_despesas/confirm_guests/views/confirm_guests_page.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/expense_model.dart';
@@ -106,72 +106,78 @@ class _BodyExpenseState extends State<BodyExpense> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
+    return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          FieldsAddExpense(
-            titleController: titleController,
-            valueController: valueController,
+          FloatingActionButton(
+            heroTag: 'tagButtonAddExpense',
+            onPressed: addExpense,
+            child: const Icon(Icons.add),
           ),
-          ElevatedButton(
-            style: ButtonStyle(
-              padding: MaterialStateProperty.all(const EdgeInsets.all(20)),
-              backgroundColor: MaterialStateProperty.all(Colors.purple),
-            ),
-            onPressed: () {
-              addExpense();
-            },
-            child: const Text(
-              "Adicionar despesa",
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: expensesList.length,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                ExpenseModel expense = expensesList[index];
-                return ListTileExpense(
-                  expense: expense,
-                  deleteExpense: () {
-                    deleteUser(expense.id!);
-                    setState(() {});
-                  },
-                  updateExpense: () {
-                    updateExpense(expense.id!, !expense.isPaid);
-                    setState(() {});
-                  },
-                );
-              },
-            ),
-          ),
-          Wrap(
-            alignment: WrapAlignment.center,
-            children: [
-              CardTotalsMoney(totalString: 'Total Pago: $totalPaid'),
-              CardTotalsMoney(totalString: 'Total Pendente : $totalPending'),
-              CardTotalsMoney(totalString: 'Total: $totalExpense'),
-            ],
-          ),
-          ElevatedButton(
+          const SizedBox(height: 10),
+          FloatingActionButton(
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const BodyConfirmGuests(),
+                  builder: (context) => const ConfirmGuestsPage(),
                 ),
               );
             },
-            style: ButtonStyle(
-              padding: MaterialStateProperty.all(const EdgeInsets.all(20)),
-              backgroundColor: MaterialStateProperty.all(Colors.purple),
-            ),
-            child: const Text(
-              'Convidados',
-            ),
+            child: const Icon(Icons.people),
           ),
         ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            FieldsAddExpense(
+              titleController: titleController,
+              valueController: valueController,
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: expensesList.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  ExpenseModel expense = expensesList[index];
+                  return ListTileExpense(
+                    expense: expense,
+                    deleteExpense: () {
+                      deleteUser(expense.id!);
+                      setState(() {});
+                    },
+                    updateExpense: () {
+                      updateExpense(expense.id!, !expense.isPaid);
+                      setState(() {});
+                    },
+                  );
+                },
+              ),
+            ),
+            Wrap(
+              alignment: WrapAlignment.start,
+              children: [
+                CardTotalsMoney(
+                  totalString: 'R\$ $totalPaid',
+                  color: Colors.green,
+                ),
+                CardTotalsMoney(
+                  totalString: 'R\$ $totalPending',
+                  color: Colors.red,
+                ),
+                CardTotalsMoney(
+                  totalString: 'R\$ $totalExpense',
+                  color: Colors.white,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

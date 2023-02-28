@@ -25,7 +25,7 @@ class ListTileExpense extends StatelessWidget {
         onPressed: deleteExpense,
       ),
       leading: IconButton(
-        color: expense.isPaid ? Colors.purple : Colors.grey,
+        color: expense.isPaid ? Colors.green : Colors.red,
         icon: const Icon(Icons.assignment_turned_in),
         onPressed: updateExpense,
       ),
@@ -37,8 +37,22 @@ class ListTileExpense extends StatelessWidget {
             "R\$ ${expense.value}",
           ),
           const Spacer(),
-          Text(
-            expense.isPaid ? '#PAGO' : '#PENDENTE',
+          Visibility(
+            visible: expense.isPaid,
+            replacement: const Text(
+              '#PENDENTE',
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            child: const Text(
+              '#PAGO',
+              style: TextStyle(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
