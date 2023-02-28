@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:desafio_web_despesas/confirm_guests/models/guests_model.dart';
 import 'package:desafio_web_despesas/confirm_guests/views/widgets/field_add_guests.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../views/widgets/card_totals_money.dart';
@@ -65,6 +66,8 @@ class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
         .whenComplete(() {
       nameController.clear();
       phoneController.clear();
+      adultsValue = 1;
+      kidsValue = 0;
       getGuests();
     }).catchError(
       (error) => debugPrint('Failed to added Guests: $error'),
@@ -128,13 +131,26 @@ class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
 
   Future<void> openWhatsapp(String phone) async {
     final String formatted = phone.replaceAll(RegExp(r'[^0-9]'), '').trim();
-    final Uri url = Uri.parse('https://wa.me/$formatted');
+    // final Uri url = Uri.parse('https://wa.me/$formatted');
+    final url = 'https://wa.me/$formatted';
     try {
-      await launchUrl(url);
+      if (GetPlatform.isIOS) {
+        await launch(
+          url,
+          forceSafariVC: true,
+          enableJavaScript: true,
+        );
+      } else {
+        await launch(
+          'https://wa.me/$formatted',
+          enableJavaScript: true,
+        );
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Não foi possível abrir o whatsapp.')),
       );
+      print(e.toString());
     }
   }
 
