@@ -1,10 +1,8 @@
-import 'dart:html';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:desafio_web_despesas/confirm_guests/models/guests_model.dart';
+import 'package:desafio_web_despesas/confirm_guests/views/widgets/dialog_confirm_delete.dart';
 import 'package:desafio_web_despesas/confirm_guests/views/widgets/field_add_guests.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../views/widgets/card_totals_money.dart';
@@ -17,6 +15,19 @@ class ConfirmGuestsPage extends StatefulWidget {
 }
 
 class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
+  List searchResult = [];
+
+  void searchFromFirebase(String query) async {
+    final result = await FirebaseFirestore.instance
+        .collection("Guests")
+        .where('string_id_array', arrayContains: query)
+        .get();
+
+    setState(() {
+      searchResult = result.docs.map((e) => e.data()).toList();
+    });
+  }
+
   CollectionReference guestsCollection =
       FirebaseFirestore.instance.collection("Guests");
 
@@ -33,6 +44,11 @@ class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
   int totalKids = 0;
   int totalGuests = 0;
 
+  final IconData whatsApp = const IconData(
+    0xf05a6,
+    fontFamily: 'MaterialIcons',
+  );
+
   @override
   void initState() {
     super.initState();
@@ -48,7 +64,6 @@ class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
       );
       return;
     }
-    ;
 
     guestsCollection
         .add(
@@ -131,26 +146,12 @@ class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
 
   Future<void> openWhatsapp(String phone) async {
     final String formatted = phone.replaceAll(RegExp(r'[^0-9]'), '').trim();
-    // final Uri url = Uri.parse('https://wa.me/$formatted');
-    final url = 'https://wa.me/$formatted';
+    final Uri url = Uri.parse('https://wa.me/$formatted');
+
     try {
-      if (GetPlatform.isIOS) {
-        await launch(
-          url,
-          forceSafariVC: true,
-          enableJavaScript: true,
-        );
-      } else {
-        await launch(
-          'https://wa.me/$formatted',
-          enableJavaScript: true,
-        );
-      }
+      await launchUrl(url, mode: LaunchMode.inAppWebView);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Não foi possível abrir o whatsapp.')),
-      );
-      print(e.toString());
+      rethrow;
     }
   }
 
@@ -181,8 +182,9 @@ class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
                 Row(
                   children: [
                     const Expanded(
-                      child:
-                          Text('Quantidade de adultos contando com o mesmo.'),
+                      child: Text(
+                        'Quantidade de adultos contando com o mesmo.',
+                      ),
                     ),
                     const SizedBox(width: 10),
                     DropdownButton<int>(
@@ -192,7 +194,6 @@ class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
                       style: const TextStyle(color: Colors.purple),
                       underline: const SizedBox.shrink(),
                       onChanged: (int? value) {
-                        // This is called when the user selects an item.
                         setState(() {
                           adultsValue = value!;
                         });
@@ -227,7 +228,6 @@ class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
                       style: const TextStyle(color: Colors.deepPurple),
                       underline: const SizedBox.shrink(),
                       onChanged: (int? value) {
-                        // This is called when the user selects an item.
                         setState(() {
                           kidsValue = value!;
                         });
@@ -269,11 +269,25 @@ class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
                           color: Colors.black,
                         ),
                         onPressed: () {
-                          deleteGuests(guest.id!);
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return DialogConfirmDelete(
+                                text:
+                                    "Tem certeza que deseja excluir convidado?",
+                                onPressedDelete: () {
+                                  deleteGuests(guest.id!);
+
+                                  Navigator.of(context).pop(true);
+                                },
+                              );
+                            },
+                          );
                         },
                       ),
                     ),
                     leading: IconButton(
+                      padding: const EdgeInsets.only(bottom: 10),
                       color: guest.isConfirm ? Colors.green : Colors.red,
                       icon: const Icon(Icons.assignment_turned_in),
                       onPressed: () {
@@ -301,8 +315,8 @@ class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
                           onPressed: () async {
                             await openWhatsapp(guest.phone);
                           },
-                          icon: const Icon(
-                            Icons.whatsapp,
+                          icon: Icon(
+                            whatsApp,
                             color: Colors.green,
                           ),
                         ),
@@ -337,25 +351,22 @@ class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Wrap(
-              alignment: WrapAlignment.start,
-              children: [
-                CardTotalsMoney(
-                  totalString: 'Crianças: $totalKids',
-                  color: Colors.purple.shade100,
-                ),
-                CardTotalsMoney(
-                  totalString: 'Adultos: $totalAdults',
-                  color: Colors.purple.shade300,
-                ),
-                CardTotalsMoney(
-                  totalString: 'Total: $totalGuests',
-                  color: Colors.purple.shade500,
-                ),
-              ],
-            ),
+          Wrap(
+            alignment: WrapAlignment.start,
+            children: [
+              CardTotalsMoney(
+                totalString: 'Crianças: $totalKids',
+                color: Colors.purple.shade100,
+              ),
+              CardTotalsMoney(
+                totalString: 'Adultos: $totalAdults',
+                color: Colors.purple.shade300,
+              ),
+              CardTotalsMoney(
+                totalString: 'Total: $totalGuests',
+                color: Colors.purple.shade500,
+              ),
+            ],
           ),
         ],
       ),

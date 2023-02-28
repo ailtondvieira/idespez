@@ -17,16 +17,19 @@ class CardTotalsMoney extends StatefulWidget {
 class _CardTotalsMoneyState extends State<CardTotalsMoney> {
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: widget.color,
-      margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-      elevation: 10,
-      shadowColor: Colors.purple,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-        child: Text(
-          widget.totalString,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: Card(
+        color: widget.color,
+        margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+        elevation: 10,
+        shadowColor: Colors.purple,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+          child: Text(
+            widget.totalString,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
         ),
       ),
     );

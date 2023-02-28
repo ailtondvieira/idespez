@@ -17,12 +17,15 @@ class ListTileExpense extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      trailing: IconButton(
-        icon: const Icon(
-          Icons.delete_outline_outlined,
-          color: Colors.black,
+      trailing: Padding(
+        padding: const EdgeInsets.only(top: 14),
+        child: IconButton(
+          icon: const Icon(
+            Icons.delete_outline_outlined,
+            color: Colors.black,
+          ),
+          onPressed: deleteExpense,
         ),
-        onPressed: deleteExpense,
       ),
       leading: IconButton(
         color: expense.isPaid ? Colors.green : Colors.red,

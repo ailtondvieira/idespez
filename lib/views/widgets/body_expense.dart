@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:desafio_web_despesas/confirm_guests/views/confirm_guests_page.dart';
 import 'package:flutter/material.dart';
 
+import '../../confirm_guests/views/widgets/dialog_confirm_delete.dart';
 import '../../models/expense_model.dart';
 import 'card_totals_money.dart';
 import 'fields_add_expense.dart';
@@ -93,7 +94,7 @@ class _BodyExpenseState extends State<BodyExpense> {
         .catchError((error) => debugPrint("Failed to update user: $error"));
   }
 
-  Future<void> deleteUser(String id) async {
+  Future<void> deleteExpense(String id) async {
     expensesCollection
         .doc(id)
         .delete()
@@ -148,7 +149,18 @@ class _BodyExpenseState extends State<BodyExpense> {
                   return ListTileExpense(
                     expense: expense,
                     deleteExpense: () {
-                      deleteUser(expense.id!);
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return DialogConfirmDelete(
+                            text: "Tem certeza que deseja excluir Despesa?",
+                            onPressedDelete: () {
+                              deleteExpense(expense.id!);
+                              Navigator.of(context).pop(true);
+                            },
+                          );
+                        },
+                      );
                       setState(() {});
                     },
                     updateExpense: () {
