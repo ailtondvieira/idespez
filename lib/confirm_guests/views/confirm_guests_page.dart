@@ -1,4 +1,4 @@
-import 'dart:html';
+// ignore_for_file: deprecated_member_use, unused_local_variable
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:desafio_web_despesas/confirm_guests/models/guests_model.dart';
@@ -33,10 +33,27 @@ class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
   int totalKids = 0;
   int totalGuests = 0;
 
+  final IconData whatsApp = const IconData(
+    0xf05a6,
+    fontFamily: 'MaterialIcons',
+  );
+
   @override
   void initState() {
-    super.initState();
     getGuests();
+    super.initState();
+  }
+
+  List<GuestsModel> guestsSearch = [];
+
+  void searchGuest(String value) {
+    guestsSearch = guestsList.where((element) {
+      return element.name.toLowerCase().contains(value.toLowerCase());
+    }).toList();
+
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<void> addGuests() async {
@@ -48,7 +65,6 @@ class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
       );
       return;
     }
-    ;
 
     guestsCollection
         .add(
@@ -170,6 +186,23 @@ class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: TextField(
+              onChanged: (value) {
+                searchGuest(value);
+                setState(() {});
+              },
+              decoration: InputDecoration(
+                labelText: 'Pesquisar',
+                filled: true,
+                suffixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+          ),
           FieldAddGuests(
             nameController: nameController,
             phoneController: phoneController,
@@ -257,9 +290,16 @@ class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
               visible: guestsList.isEmpty,
               replacement: ListView.builder(
                 shrinkWrap: true,
-                itemCount: guestsList.length,
+                itemCount: guestsSearch.isNotEmpty
+                    ? guestsSearch.length
+                    : guestsList.length,
                 itemBuilder: (context, index) {
                   var guest = guestsList[index];
+                  if (guestsSearch.isEmpty) {
+                    guest = guestsList[index];
+                  } else {
+                    guest = guestsList[index];
+                  }
                   return ListTile(
                     trailing: Padding(
                       padding: const EdgeInsets.only(top: 17),
@@ -301,8 +341,8 @@ class _BodyConfirmGuestsState extends State<ConfirmGuestsPage> {
                           onPressed: () async {
                             await openWhatsapp(guest.phone);
                           },
-                          icon: const Icon(
-                            Icons.whatsapp,
+                          icon: Icon(
+                            whatsApp,
                             color: Colors.green,
                           ),
                         ),
