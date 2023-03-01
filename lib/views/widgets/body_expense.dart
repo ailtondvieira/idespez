@@ -38,9 +38,13 @@ class _BodyExpenseState extends State<BodyExpense> {
   void searchExpense() {
     if (valueSearch.isEmpty) return;
 
-    expenseSearch = expensesList.where((element) {
-      return element.title.toLowerCase().contains(valueSearch.toLowerCase());
-    }).toList();
+    expenseSearch = expensesList.where(
+      (element) {
+        return element.title.toLowerCase().contains(
+              valueSearch.toLowerCase(),
+            );
+      },
+    ).toList();
 
     if (mounted) {
       setState(() {});
